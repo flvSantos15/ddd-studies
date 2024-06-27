@@ -14,6 +14,10 @@ export default class Order {
     this.validate()
   }
 
+  get id(): string {
+    return this._id
+  }
+
   validate(): boolean {
     if (this._id.length === 0) {
       throw new Error('Id is required')
@@ -31,6 +35,6 @@ export default class Order {
   }
 
   total(): number {
-    return this._items.reduce((acc, item) => acc + item.orderItemTotal(), 0);
+    return this._items.reduce((acc, item) => acc + item.orderItemTotal(), 0)
   }
 }
