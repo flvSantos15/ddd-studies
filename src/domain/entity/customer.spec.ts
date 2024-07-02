@@ -22,6 +22,14 @@ describe('Customer unit test', () => {
     expect(customer.name).toBe('Jane')
   })
 
+  it('should add address', () => {
+    const customer = new Customer('123', 'Customer 1')
+    const address = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
+    customer.changeAddress(address)
+
+    expect(customer.address.street).toBe(address.street)
+  })
+
   it('should activate customer', () => {
     const customer = new Customer('123', 'Customer 1')
     const address = new Address('Street 1', 123, '1234-245', 'São paulo')

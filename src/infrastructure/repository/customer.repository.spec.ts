@@ -27,32 +27,9 @@ describe('Customer repository test', () => {
     const customerRepository = new CustomerRepository()
     const customer = new Customer('123', 'Customer 1')
     const address = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
-    customer.Address = address
+    customer.changeAddress(address)
     await customerRepository.create(customer)
 
-    const customerModel = await CustomerModel.findOne({ where: { id: '123' } })
-
-    expect(customerModel.toJSON()).toStrictEqual({
-      id: '123',
-      name: 'Customer 1',
-      active: customer.isActive(),
-      rewardPoints: customer.rewardPoints,
-      street: address.street,
-      number: address.number,
-      zipcode: address.zipcode,
-      city: address.city
-    })
-  })
-
-  it('should update a customer', async () => {
-    const customerRepository = new CustomerRepository()
-    const customer = new Customer('123', 'Customer 1')
-    const address = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
-    customer.Address = address
-    await customerRepository.create(customer)
-
-    customer.changeName('Customer 2')
-    await customerRepository.update(customer)
     const customerModel = await CustomerModel.findOne({ where: { id: '123' } })
 
     expect(customerModel.toJSON()).toStrictEqual({
@@ -67,11 +44,48 @@ describe('Customer repository test', () => {
     })
   })
 
+  it('should update a customer', async () => {
+    const customerRepository = new CustomerRepository()
+    const customer = new Customer('456', 'Customer 1')
+    const address = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
+    customer.changeAddress(address)
+    await customerRepository.create(customer)
+
+    const customerModel = await CustomerModel.findOne({ where: { id: '456' } })
+
+    expect(customerModel.toJSON()).toStrictEqual({
+      id: '456',
+      name: customer.name,
+      active: customer.isActive(),
+      rewardPoints: customer.rewardPoints,
+      street: address.street,
+      number: address.number,
+      zipcode: address.zipcode,
+      city: address.city
+    })
+
+    customer.changeName('Customer 2')
+    await customerRepository.update(customer)
+
+    const customerModel2 = await CustomerModel.findOne({ where: { id: '456' } })
+
+    expect(customerModel2.toJSON()).toStrictEqual({
+      id: '456',
+      name: 'Customer 2',
+      active: customer.isActive(),
+      rewardPoints: customer.rewardPoints,
+      street: address.street,
+      number: address.number,
+      zipcode: address.zipcode,
+      city: address.city
+    })
+  })
+
   it('should find a customer', async () => {
     const customerRepository = new CustomerRepository()
-    const customer = new Customer('123', 'Customer 1')
+    const customer = new Customer('124', 'Customer 1')
     const address = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
-    customer.Address = address
+    customer.changeAddress(address)
     await customerRepository.create(customer)
 
     const customerResult = await customerRepository.find(customer.id)
@@ -89,15 +103,15 @@ describe('Customer repository test', () => {
 
   it('should find all customers', async () => {
     const customerRepository = new CustomerRepository()
-    const customer1 = new Customer('123', 'Customer 1')
+    const customer1 = new Customer('789', 'Customer 1')
     const address1 = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
-    customer1.Address = address1
+    customer1.changeAddress(address1)
     customer1.addRewardPoints(10)
     customer1.activate()
 
-    const customer2 = new Customer('456', 'Customer 2')
+    const customer2 = new Customer('457', 'Customer 2')
     const address2 = new Address('Street 2', 2, 'Zipcode 2', 'City 2')
-    customer2.Address = address2
+    customer2.changeAddress(address2)
     customer2.addRewardPoints(20)
 
     await customerRepository.create(customer1)
@@ -105,7 +119,7 @@ describe('Customer repository test', () => {
 
     const customers = await customerRepository.findAll()
 
-    expect(customers).toHaveLength(2)
+    expect(customers).toHaveLength(5)
     expect(customers).toContainEqual(customer1)
     expect(customers).toContainEqual(customer2)
   })

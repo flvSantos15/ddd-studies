@@ -4,8 +4,8 @@ import {
   PrimaryKey,
   Column,
   ForeignKey,
-  BelongsTo,
-  HasMany
+  HasMany,
+  BelongsTo
 } from 'sequelize-typescript'
 import CustomerModel from './customer.model'
 import OrderItemModel from './order-item.model'
