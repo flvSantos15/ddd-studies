@@ -25,24 +25,19 @@ export default class OrderRepository {
     )
   }
 
-  // async update(entity: Customer): Promise<void> {
-  //   await CustomerModel.update(
-  //     {
-  //       name: entity.name,
-  //       street: entity.Address.street,
-  //       number: entity.Address.number,
-  //       zipcode: entity.Address.zipcode,
-  //       city: entity.Address.city,
-  //       active: entity.isActive(),
-  //       rewardPoints: entity.rewardPoints
-  //     },
-  //     {
-  //       where: {
-  //         id: entity.id
-  //       }
-  //     }
-  //   )
-  // }
+  // TODO: not tested yet
+  async update(entity: Order): Promise<void> {
+    await OrderModel.update(
+      {
+        items: entity.items
+      },
+      {
+        where: {
+          id: entity.id
+        }
+      }
+    )
+  }
 
   async find(id: string, customerId: string): Promise<Order> {
     let orderModel
@@ -75,27 +70,31 @@ export default class OrderRepository {
     return order
   }
 
-  // async findAll(): Promise<Customer[]> {
-  //   const customerModels = await CustomerModel.findAll()
+  async findAll(): Promise<Order[]> {
+    const orderModels = await OrderModel.findAll({
+      include: {
+        model: OrderItemModel
+      }
+    })
 
-  //   const customers = customerModels.map((customerModels) => {
-  //     let customer = new Customer(customerModels.id, customerModels.name)
-  //     customer.addRewardPoints(customerModels.rewardPoints)
-  //     const address = new Address(
-  //       customerModels.street,
-  //       customerModels.number,
-  //       customerModels.zipcode,
-  //       customerModels.city
-  //     )
-  //     customer.changeAddress(address)
+    const orders = orderModels.map((orderModels) => {
+      const orderItems = orderModels.items.map((item) => {
+        const orderItem = new OrderItem(
+          item.id,
+          item.name,
+          item.price,
+          item.product_id,
+          item.quantity
+        )
 
-  //     if (customerModels.active) {
-  //       customer.activate()
-  //     }
+        return orderItem
+      })
 
-  //     return customer
-  //   })
+      let order = new Order(orderModels.id, orderModels.customer_id, orderItems)
 
-  //   return customers
-  // }
+      return order
+    })
+
+    return orders
+  }
 }

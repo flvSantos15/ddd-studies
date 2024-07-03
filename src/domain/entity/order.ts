@@ -42,6 +42,10 @@ export default class Order {
     return true
   }
 
+  addItems(items: OrderItem): void {
+    this._items.push(items)
+  }
+
   total(): number {
     return this._items.reduce((acc, item) => acc + item.orderItemTotal(), 0)
   }
