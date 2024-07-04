@@ -25,11 +25,16 @@ export default class OrderRepository {
     )
   }
 
-  // TODO: not tested yet
   async update(entity: Order): Promise<void> {
     await OrderModel.update(
       {
-        items: entity.items
+        items: entity.items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          product_id: item.productId,
+          quantity: item.quantity
+        }))
       },
       {
         where: {

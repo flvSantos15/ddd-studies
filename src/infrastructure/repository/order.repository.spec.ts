@@ -128,18 +128,6 @@ describe('Order repository test', () => {
       ]
     })
 
-    const orderItem2 = new OrderItem(
-      '2',
-      product.name,
-      product.price,
-      product.id,
-      3
-    )
-
-    order.addItems(orderItem2)
-
-    console.log(order)
-
     await orderRepository.update(order)
 
     const orderModel2 = await OrderModel.findOne({
@@ -148,8 +136,21 @@ describe('Order repository test', () => {
     })
 
     // TODO: Só estpa recebendo um item de order
-    expect(orderModel2.items).toHaveLength(2)
-    // expect(orderModel2.items).toContainEqual(orderItem2)
+    expect(orderModel2.toJSON()).toStrictEqual({
+      id: order.id,
+      customer_id: customer.id,
+      total: order.total(),
+      items: order.items.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          order_id: order.id,
+          quantity: item.quantity,
+          product_id: '123'
+        }
+      })
+    })
   })
 
   // TODO: not tested yet
