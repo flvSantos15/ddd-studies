@@ -26,16 +26,44 @@ export default class OrderRepository {
   }
 
   async update(entity: Order): Promise<void> {
+    const entityItems = entity.items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      product_id: item.productId,
+      quantity: item.quantity
+    }))
+
+    const entityItemsIDs = entity.items.map((item) => item.id)
+
+    const foundItems = await OrderItemModel.findAll({
+      where: { order_id: entity.id }
+    })
+
+    const foundItemsIDs = foundItems.map((item) => item.id)
+
+    const itemsToCreate = entityItems.filter(
+      (item) => !foundItemsIDs.includes(item.id)
+    )
+
+    const itemsToRemove = foundItems.filter(
+      (item) => !entityItemsIDs.includes(item.id)
+    )
+
+    for (const item of itemsToCreate) {
+      await OrderItemModel.create({ ...item, order_id: entity.id })
+    }
+
+    for (const item of itemsToRemove) {
+      await OrderItemModel.destroy({
+        where: {
+          id: item.id
+        }
+      })
+    }
+
     await OrderModel.update(
-      {
-        items: entity.items.map((item) => ({
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          product_id: item.productId,
-          quantity: item.quantity
-        }))
-      },
+      { total: entity.total() },
       {
         where: {
           id: entity.id
@@ -55,7 +83,7 @@ export default class OrderRepository {
         rejectOnEmpty: true
       })
     } catch (error) {
-      throw new Error('Customer not found')
+      throw new Error('Order not found')
     }
 
     const orderItems = orderModel.items.map((item) => {

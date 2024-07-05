@@ -46,8 +46,8 @@ export default class Order {
     this._customerId = customerId
   }
 
-  addItems(items: OrderItem[]): void {
-    this._items.push(...items)
+  addItems(item: OrderItem): void {
+    this._items.push(item)
   }
 
   total(): number {

@@ -85,26 +85,29 @@ describe('Order repository test', () => {
   // TODO: not tested yet
   it('should update a order', async () => {
     const customerRepository = new CustomerRepository()
+    const productRepository = new ProductRepository()
+    const orderRepository = new OrderRepository()
+
     const customer = new Customer('456', 'Customer 1')
     const address = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
     customer.changeAddress(address)
     await customerRepository.create(customer)
 
-    const productRepository = new ProductRepository()
-    const product = new Product('123', 'Product 1', 10)
-    await productRepository.create(product)
+    const product1 = new Product('123', 'Product 1', 10)
+    const product2 = new Product('456', 'Product 2', 14)
+    await productRepository.create(product1)
+    await productRepository.create(product2)
 
     const orderItem1 = new OrderItem(
       '1',
-      product.name,
-      product.price,
-      product.id,
+      product1.name,
+      product1.price,
+      product1.id,
       2
     )
 
     const order = new Order('456', customer.id, [orderItem1])
 
-    const orderRepository = new OrderRepository()
     await orderRepository.create(order)
 
     const orderModel = await OrderModel.findOne({
@@ -123,10 +126,20 @@ describe('Order repository test', () => {
           price: orderItem1.price,
           quantity: orderItem1.quantity,
           order_id: order.id,
-          product_id: product.id
+          product_id: product1.id
         }
       ]
     })
+
+    const orderItem2 = new OrderItem(
+      '2',
+      product2.name,
+      product2.price,
+      product2.id,
+      2
+    )
+
+    order.addItems(orderItem2)
 
     await orderRepository.update(order)
 
@@ -135,31 +148,16 @@ describe('Order repository test', () => {
       include: ['items']
     })
 
-    // TODO: Só estpa recebendo um item de order
-    expect(orderModel2.toJSON()).toStrictEqual({
-      id: order.id,
-      customer_id: customer.id,
-      total: order.total(),
-      items: order.items.map((item) => {
-        return {
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          order_id: order.id,
-          quantity: item.quantity,
-          product_id: '123'
-        }
-      })
-    })
+    expect(orderModel2.items.length).toBe(2)
+    expect(orderModel2.total).toBe(order.total())
   })
 
-  // TODO: not tested yet
   it('should throw an error when customer is not found', async () => {
-    const customerRepository = new CustomerRepository()
+    const orderRepository = new OrderRepository()
 
     expect(async () => {
-      await customerRepository.find('456ABC')
-    }).rejects.toThrow('Customer not found')
+      await orderRepository.find('456ABC', '123')
+    }).rejects.toThrow('Order not found')
   })
 
   it('should find a new order', async () => {
