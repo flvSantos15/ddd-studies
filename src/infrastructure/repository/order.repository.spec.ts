@@ -156,7 +156,7 @@ describe('Order repository test', () => {
     const orderRepository = new OrderRepository()
 
     expect(async () => {
-      await orderRepository.find('456ABC', '123')
+      await orderRepository.findOne('456ABC', '123')
     }).rejects.toThrow('Order not found')
   })
 
@@ -189,7 +189,7 @@ describe('Order repository test', () => {
       include: ['items']
     })
 
-    const foundOrder = await orderRepository.find('123', '123')
+    const foundOrder = await orderRepository.findOne('123', '123')
 
     expect(orderModel.toJSON()).toStrictEqual({
       id: '123',

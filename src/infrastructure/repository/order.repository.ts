@@ -4,7 +4,7 @@ import OrderRepositoryInterface from '../../domain/repository/order-repository.i
 import OrderItemModel from '../db/sequelize/model/order-item.model'
 import OrderModel from '../db/sequelize/model/order.model'
 
-export default class OrderRepository {
+export default class OrderRepository implements OrderRepositoryInterface {
   async create(entity: Order): Promise<void> {
     await OrderModel.create(
       {
@@ -72,7 +72,7 @@ export default class OrderRepository {
     )
   }
 
-  async find(id: string, customerId: string): Promise<Order> {
+  async findOne(id: string, customerId: string): Promise<Order> {
     let orderModel
     try {
       orderModel = await OrderModel.findOne({
@@ -101,6 +101,10 @@ export default class OrderRepository {
     const order = new Order(id, customerId, orderItems)
 
     return order
+  }
+
+  async find(id: string): Promise<Order> {
+    return
   }
 
   async findAll(): Promise<Order[]> {
