@@ -88,25 +88,25 @@ describe('Order repository test', () => {
     const productRepository = new ProductRepository()
     const orderRepository = new OrderRepository()
 
-    const customer = new Customer('456', 'Customer 1')
+    const customer = new Customer('987', 'Customer 1')
     const address = new Address('Street 1', 1, 'Zipcode 1', 'City 1')
     customer.changeAddress(address)
     await customerRepository.create(customer)
 
-    const product1 = new Product('123', 'Product 1', 10)
-    const product2 = new Product('456', 'Product 2', 14)
+    const product1 = new Product('987', 'Product 1', 10)
+    const product2 = new Product('654', 'Product 2', 14)
     await productRepository.create(product1)
     await productRepository.create(product2)
 
     const orderItem1 = new OrderItem(
-      '1',
+      '135',
       product1.name,
       product1.price,
       product1.id,
       2
     )
 
-    const order = new Order('456', customer.id, [orderItem1])
+    const order = new Order('135', customer.id, [orderItem1])
 
     await orderRepository.create(order)
 
@@ -162,24 +162,24 @@ describe('Order repository test', () => {
 
   it('should find a new order', async () => {
     const customerRepository = new CustomerRepository()
-    const customer = new Customer('123', 'Customer 1')
+    const customer = new Customer('135', 'Customer 1')
     const address = new Address('street 1', 1, 'Zipcode 1', 'City 1')
     customer.changeAddress(address)
     await customerRepository.create(customer)
 
     const productRepository = new ProductRepository()
-    const product = new Product('123', 'Product 1', 10)
+    const product = new Product('129', 'Product 1', 10)
     await productRepository.create(product)
 
     const ordemItem = new OrderItem(
-      '1',
+      '357',
       product.name,
       product.price,
       product.id,
       2
     )
 
-    const order = new Order('123', '123', [ordemItem])
+    const order = new Order('357', customer.id, [ordemItem])
 
     const orderRepository = new OrderRepository()
     await orderRepository.create(order)
@@ -189,11 +189,11 @@ describe('Order repository test', () => {
       include: ['items']
     })
 
-    const foundOrder = await orderRepository.findOne('123', '123')
+    const foundOrder = await orderRepository.findOne(order.id, customer.id)
 
     expect(orderModel.toJSON()).toStrictEqual({
-      id: '123',
-      customer_id: '123',
+      id: order.id,
+      customer_id: customer.id,
       total: foundOrder.total(),
       items: foundOrder.items.map((item) => {
         return {
@@ -202,7 +202,7 @@ describe('Order repository test', () => {
           price: item.price,
           order_id: order.id,
           quantity: item.quantity,
-          product_id: '123'
+          product_id: product.id
         }
       })
     })
@@ -216,28 +216,28 @@ describe('Order repository test', () => {
     await customerRepository.create(customer)
 
     const productRepository = new ProductRepository()
-    const product1 = new Product('123', 'Product 1', 10)
-    const product2 = new Product('456', 'Product 2', 20)
+    const product1 = new Product('246', 'Product 1', 10)
+    const product2 = new Product('249', 'Product 2', 20)
     await productRepository.create(product1)
     await productRepository.create(product2)
 
     const orderItem1 = new OrderItem(
-      '1',
+      '579',
       product1.name,
       product1.price,
       product1.id,
       2
     )
     const orderItem2 = new OrderItem(
-      '2',
+      '569',
       product2.name,
       product2.price,
       product2.id,
       3
     )
 
-    const order1 = new Order('123', customer.id, [orderItem1])
-    const order2 = new Order('456', customer.id, [orderItem2])
+    const order1 = new Order('247', customer.id, [orderItem1])
+    const order2 = new Order('248', customer.id, [orderItem2])
 
     const orderRepository = new OrderRepository()
     await orderRepository.create(order1)
@@ -245,7 +245,7 @@ describe('Order repository test', () => {
 
     const ordersModel = await orderRepository.findAll()
 
-    expect(ordersModel).toHaveLength(2)
+    expect(ordersModel).toHaveLength(5)
     expect(ordersModel).toContainEqual(order1)
   })
 })
