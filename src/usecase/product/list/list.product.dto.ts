@@ -7,5 +7,5 @@ type Product = {
 }
 
 export interface OutputListProductDto {
-  customers: Product[]
+  products: Product[]
 }
