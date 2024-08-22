@@ -3,7 +3,7 @@ export interface InputFindProductDto {
 }
 
 export interface OutputFindProductDto {
-  id: number
+  id: string
   name: string
   price: number
 }
