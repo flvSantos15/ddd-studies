@@ -7,7 +7,7 @@ import ProductModel from '../../../infrastructure/product/repository/sequelize/p
 const input = {
   id: '123',
   name: 'Product 1',
-  price: 20
+  price: 22
 }
 
 describe('Unit test update product', () => {
