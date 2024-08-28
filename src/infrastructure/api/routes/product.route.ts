@@ -30,7 +30,6 @@ productRoute.get('/', async (req: Request, res: Response) => {
     const output = await usecase.execute({})
     res.send(output)
   } catch (error) {
-    console.log(error)
     res.status(500).send(error)
   }
 })
