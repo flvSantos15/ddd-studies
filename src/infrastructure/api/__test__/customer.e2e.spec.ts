@@ -79,5 +79,15 @@ describe('e2e test for customer', () => {
     const customer2 = listResponse.body.customers[1]
     expect(customer2.name).toBe('Jane')
     expect(customer2.address.street).toBe('Street2')
+
+    const listResponseXML = await request(app)
+      .get('/customer')
+      .set('Accept', 'application/xml')
+      .send()
+
+    expect(listResponseXML.status).toBe(200)
+    expect(listResponseXML.text).toContain(
+      `<?xml version="1.0" encoding="UTF-8"?>`
+    )
   })
 })
